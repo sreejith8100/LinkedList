@@ -80,7 +80,43 @@
 
 template <typename T>
 void LinkedList<T>::insertOrdered(const T& newData) {
-
+  Node* cur = head_;
+  Node* temp = new Node(newData); //Creating a new node on the heap memory.
+  int i=0;
+  //For an empty node
+  if(cur==nullptr){
+    head_=temp;
+    tail_=temp;
+    size_++;
+  }
+  else{
+    while(cur){
+      if(temp->data <= cur->data){
+        temp->next = cur;
+        if(cur->prev == nullptr){
+          head_=temp;
+          cur->prev=temp;
+        }
+        else{
+          (cur->prev)->next = temp; 
+          temp->prev = cur->prev;
+        }
+        cur->prev=temp;
+        //Assigning i=1 if the new node is to be inserted in the middle of the linked list. 
+        i=1;
+        break;
+      }
+      cur = cur->next;
+    }
+     
+     //If the new node inserted is at the end of the linked list.
+    if(i!=1){
+      tail_->next = temp;
+      temp->prev = tail_;
+      tail_ = temp;
+    }
+  size_++;
+  }
   // -----------------------------------------------------------
   // TODO: Your code here!
   // -----------------------------------------------------------
@@ -222,6 +258,30 @@ LinkedList<T> LinkedList<T>::merge(const LinkedList<T>& other) const {
   // the final result we want. This is what we will return at the end of
   // the function.
   LinkedList<T> merged;
+  //checking if either of the two left or right list is empty
+  //As both of the lists are already sorted, only the the first terms needs to be compared.
+  //Then push the smallest term into the final, i.e, merged list.
+  while (!right.empty() && !left.empty())
+  {
+    if (left.front() < right.front())
+    {
+      merged.pushBack(left.front());
+      left.popFront();
+    }
+    else
+    {
+      merged.pushBack(right.front());
+      right.popFront();
+    }
+  }
+  //Check which of the either list is empty
+  LinkedList<T> temp = (left.empty()) ? right : left;
+
+  while (!temp.empty())
+  {
+    merged.pushBack(temp.front());
+    temp.popFront();
+  }
 
   // -----------------------------------------------------------
   // TODO: Your code here!
